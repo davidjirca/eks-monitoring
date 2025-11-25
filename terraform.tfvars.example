@@ -1,17 +1,10 @@
-# Copy this file to terraform.tfvars and customize for your environment
-# cp terraform.tfvars.example terraform.tfvars
-
-# AWS Region
-region = "eu-central-1"
-
-# Environment (dev, staging, prod)
+# AWS Configuration
+region      = "eu-central-1"
 environment = "dev"
 
-# Project name (used for resource naming)
+# Project Configuration
 project_name = "eks-monitoring"
-
-# EKS Cluster Configuration
-cluster_name    = "monitoring-cluster"
+cluster_name = "monitoring-cluster"
 cluster_version = "1.28"
 
 # VPC Configuration
@@ -20,9 +13,7 @@ availability_zones   = ["eu-central-1a", "eu-central-1b", "eu-central-1c"]
 private_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 public_subnet_cidrs  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
-# EKS Node Group Configuration
-# For development: t3.medium or t3.large
-# For production: t3.xlarge, m5.xlarge, or larger
+# EKS Node Group Configuration (for development/learning)
 node_group_instance_types = ["t3.large"]
 node_group_desired_size   = 3
 node_group_min_size       = 2
@@ -30,20 +21,18 @@ node_group_max_size       = 6
 node_group_disk_size      = 100
 
 # S3 Retention Policies for Loki Logs
-# Adjust based on your retention requirements and budget
-loki_chunks_retention_days   = 30   # Keep in Standard for 30 days
-loki_chunks_ia_days          = 90   # Move to Infrequent Access after 90 days
-loki_chunks_glacier_days     = 180  # Move to Glacier after 180 days
-loki_chunks_expiration_days  = 365  # Delete after 1 year (0 = never expire)
+loki_chunks_retention_days  = 30
+loki_chunks_ia_days         = 90
+loki_chunks_glacier_days    = 180
+loki_chunks_expiration_days = 365
 
 # S3 Retention Policies for Prometheus Metrics
-# Metrics are typically kept longer than logs
-prometheus_retention_days    = 30   # Keep in Standard for 30 days
-prometheus_ia_days           = 90   # Move to IA after 90 days
-prometheus_glacier_days      = 180  # Move to Glacier after 180 days
-prometheus_expiration_days   = 730  # Delete after 2 years (0 = never expire)
+prometheus_retention_days   = 30
+prometheus_ia_days          = 90
+prometheus_glacier_days     = 180
+prometheus_expiration_days  = 730
 
-# S3 Versioning
+# S3 Configuration
 enable_s3_versioning = true
 
 # Cluster Add-ons
@@ -51,45 +40,12 @@ enable_cluster_autoscaler = true
 enable_ebs_csi_driver     = true
 enable_alb_controller     = true
 
-# Monitoring Namespace
+# Monitoring Configuration
 monitoring_namespace = "monitoring"
 
 # Additional Tags
 additional_tags = {
-  Owner       = "DevOps Team"
-  CostCenter  = "Engineering"
-  Terraform   = "true"
+  Owner      = "DevOps"
+  Terraform  = "true"
+  CostCenter = "Engineering"
 }
-
-# ==================================================
-# Cost Optimization Tips:
-# ==================================================
-#
-# 1. NAT Gateways (~$100/month for 3 AZs)
-#    - Reduce to 1 AZ for dev/staging (not recommended for prod)
-#    - Consider NAT instances for non-production
-#
-# 2. Node Instance Types
-#    - Dev: t3.medium (2 vCPU, 4GB) - ~$63/month each
-#    - Staging: t3.large (2 vCPU, 8GB) - ~$126/month each
-#    - Prod: t3.xlarge (4 vCPU, 16GB) - ~$252/month each
-#    - Use Spot instances for non-critical workloads
-#
-# 3. EBS Volumes
-#    - gp3 is cheaper than gp2
-#    - Adjust disk size based on actual needs
-#
-# 4. S3 Storage
-#    - Aggressive lifecycle policies reduce costs
-#    - Consider S3 Intelligent-Tiering for unpredictable access
-#    - Use Glacier for archival (very cheap)
-#
-# 5. EKS Control Plane
-#    - $73/month per cluster (fixed cost)
-#    - Can't be reduced, but you can run multiple environments in one cluster
-#
-# 6. VPC Endpoints
-#    - Save NAT gateway costs for AWS service traffic
-#    - ~$7-15/month per endpoint
-#
-# ==================================================

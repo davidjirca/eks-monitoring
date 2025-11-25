@@ -51,6 +51,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "loki_chunks" {
     id     = "loki-chunks-lifecycle"
     status = "Enabled"
 
+    # Apply to all objects
+    filter {}
+
     # Transition to Infrequent Access after specified days
     transition {
       days          = var.loki_chunks_ia_days
@@ -83,6 +86,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "loki_chunks" {
     content {
       id     = "cleanup-old-versions"
       status = "Enabled"
+
+      filter {}
 
       noncurrent_version_expiration {
         noncurrent_days = 30
@@ -144,6 +149,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "loki_ruler" {
     id     = "cleanup-multipart-uploads"
     status = "Enabled"
 
+    filter {}
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
     }
@@ -155,6 +162,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "loki_ruler" {
     content {
       id     = "cleanup-old-versions"
       status = "Enabled"
+
+      filter {}
 
       noncurrent_version_expiration {
         noncurrent_days = 30
@@ -216,6 +225,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "prometheus_storage" {
     id     = "prometheus-metrics-lifecycle"
     status = "Enabled"
 
+    # Apply to all objects
+    filter {}
+
     # Transition to Infrequent Access after specified days
     transition {
       days          = var.prometheus_ia_days
@@ -248,6 +260,8 @@ resource "aws_s3_bucket_lifecycle_configuration" "prometheus_storage" {
     content {
       id     = "cleanup-old-versions"
       status = "Enabled"
+
+      filter {}
 
       noncurrent_version_expiration {
         noncurrent_days = 30
@@ -300,6 +314,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "tempo_storage" {
   rule {
     id     = "tempo-traces-lifecycle"
     status = "Enabled"
+
+    # Apply to all objects
+    filter {}
 
     # Traces are typically kept for shorter periods
     transition {

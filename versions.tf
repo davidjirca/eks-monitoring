@@ -22,9 +22,12 @@ terraform {
 }
 
 provider "aws" {
-  region                   = var.region
-  profile                  = var.profile
-  shared_credentials_files = ["/home/davidjir/.aws/credentials"]
+  region = var.region
+
+  # AWS credentials will be read from:
+  # 1. Environment variables (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+  # 2. AWS credentials file (~/.aws/credentials) using the profile specified
+  # 3. IAM role (if running on EC2)
 
   default_tags {
     tags = {
